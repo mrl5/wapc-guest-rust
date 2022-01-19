@@ -103,6 +103,25 @@ pub extern "C" fn __guest_call(op_len: i32, req_len: i32) -> i32 {
 }
 
 /// The function through which all host calls take place.
+/// # Examples
+///
+/// ## Calling host method that takes no arguments
+///
+/// This example shows how to do a `host_call()` to an operation that returns a `bool` and takes no
+/// arguments.
+/// ```rust
+/// let from_host = host_call("binding", "namespace", "have_been_called", &[])?;
+/// let deserialized: bool = deserialize(&from_host)?;
+/// ```
+///
+/// ## Calling host method that takes 2 args of different type
+///
+/// This example shows how to do a `host_call()` to an operation that takes `bool` as a 1st
+/// argument and `&str` as a 2nd argument
+/// ```rust
+/// let from_host = host_call("binding", "namespace", "pluralize", &serialize((2, "cat"))?)?;
+/// let deserialized: String = deserialize(&from_host)?;
+/// ```
 pub fn host_call(binding: &str, ns: &str, op: &str, msg: &[u8]) -> CallResult {
     let callresult = unsafe {
         __host_call(
